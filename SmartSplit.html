@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>SplitSmart — Split Smarter, Settle Faster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== ROOT ===== */
+        :root {
+            --bg: #0A0E1A;
+            --primary: #FF6B6B;
+            --primary-dark: #E55A5A;
+            --secondary: #4ECDC4;
+            --secondary-light: #7EDDD6;
+            --accent: #FFD93D;
+            --text: #FFFFFF;
+            --text-secondary: #B8C4D0;
+            --muted: #6B7B8D;
+            --muted2: #8A9AAE;
+            --surface: #141828;
+            --surface-light: #1E2438;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-hover: rgba(255, 255, 255, 0.09);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.16);
+            --blur: blur(18px);
+            --blur-heavy: blur(32px);
+            --success: #4ECDC4;
+            --danger: #FF6B6B;
+            --warning: #FFD93D;
+            --radius: 28px;
+            --radius-sm: 14px;
+            --radius-xs: 10px;
+            --max-app: 560px;
+            --nav-height: 72px;
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== ANIMATED BG ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(255, 107, 107, 0.20) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 70%, rgba(78, 205, 196, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 50% at 60% 10%, rgba(255, 217, 61, 0.10) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 14s ease-in-out infinite alternate;
+        }
+        .orb1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 107, 107, 0.16);
+            top: -80px;
+            left: -80px;
+            animation-delay: 0s;
+        }
+        .orb2 {
+            width: 200px;
+            height: 200px;
+            background: rgba(78, 205, 196, 0.10);
+            bottom: 100px;
+            right: -60px;
+            animation-delay: -5s;
+        }
+        .orb3 {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 217, 61, 0.10);
+            top: 50%;
+            left: 60%;
+            animation-delay: -9s;
+        }
+        @keyframes drift {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+            to {
+                transform: translate(25px, 35px) scale(1.06);
+            }
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        #login-page {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(16px, 4vw, 40px);
+            width: 100%;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(20, 24, 40, 0.82);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: var(--radius);
+            padding: clamp(28px, 5vw, 44px) clamp(24px, 4vw, 40px) clamp(28px, 4vw, 36px);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .login-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .login-logo span {
+            color: var(--secondary);
+        }
+
+        .login-tagline {
+            text-align: center;
+            font-size: clamp(12px, 1.6vw, 15px);
+            color: var(--muted2);
+            margin-bottom: clamp(20px, 3vw, 32px);
+        }
+
+        .login-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: clamp(18px, 2.5vw, 28px);
+        }
+        .login-tab {
+            flex: 1;
+            padding: 10px 6px;
+            text-align: center;
+            border-radius: var(--radius-xs);
+            font-size: clamp(12px, 1.4vw, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted2);
+            user-select: none;
+        }
+        .login-tab.active {
+            background: rgba(255, 107, 107, 0.35);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            box-shadow: 0 2px 16px rgba(255, 107, 107, 0.30);
+        }
+
+        .login-field {
+            margin-bottom: 14px;
+        }
+        .login-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted2);
+            margin-bottom: 6px;
+        }
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 13px 16px;
+            color: var(--text);
+            font-size: clamp(14px, 1.6vw, 16px);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+        .login-input:focus {
+            border-color: rgba(255, 107, 107, 0.50);
+            background: rgba(255, 107, 107, 0.06);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.12);
+        }
+        .login-input::placeholder {
+            color: var(--muted);
+        }
+
+        .demo-hint {
+            background: rgba(78, 205, 196, 0.08);
+            border: 1px solid rgba(78, 205, 196, 0.20);
+            border-radius: var(--radius-xs);
+            padding: 10px 14px;
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--secondary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(14px, 1.6vw, 16px);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 24px rgba(255, 107, 107, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), transparent);
+            pointer-events: none;
+        }
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.45);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .google-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 13px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: clamp(13px, 1.4vw, 15px);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--glass-border-hover);
+        }
+
+        .login-footer {
+            text-align: center;
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--muted);
+            margin-top: 20px;
+        }
+        .login-footer a {
+            color: var(--secondary-light);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* ===== APP SHELL ===== */
+        #app-shell {
+            display: none;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: var(--max-app);
+            margin: 0 auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        .app {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
+            padding-bottom: calc(var(--nav-height) + 16px);
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            padding: 14px clamp(16px, 3vw, 28px) 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.70);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(18px, 3vw, 22px);
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            color: var(--secondary);
+        }
+        .avatar {
+            width: clamp(32px, 5vw, 40px);
+            height: clamp(32px, 5vw, 40px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: clamp(12px, 1.4vw, 14px);
+            cursor: pointer;
+            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.30);
+            flex-shrink: 0;
+        }
+        .notif-btn {
+            width: clamp(32px, 5vw, 40px);
+            height: clamp(32px, 5vw, 40px);
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 2px solid var(--bg);
+        }
+        .topbar-right {
+            display: flex;
+            gap: clamp(6px, 1.5vw, 12px);
+            align-items: center;
+        }
+
+        /* ===== SCREENS ===== */
+        .screen {
+            display: none;
+            padding: 0 clamp(16px, 3vw, 28px);
+            animation: fadeIn 0.25s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== GLASS CARD ===== */
+        .g {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* ===== HERO ===== */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(40, 20, 30, 0.80), rgba(20, 30, 40, 0.80));
+            backdrop-filter: var(--blur-heavy);
+            -webkit-backdrop-filter: var(--blur-heavy);
+            border: 1px solid rgba(255, 107, 107, 0.25);
+            border-radius: var(--radius);
+            padding: clamp(20px, 3.5vw, 30px);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(255, 107, 107, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.15), transparent);
+            border-radius: 50%;
+        }
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -20px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.15), transparent);
+            border-radius: 50%;
+        }
+        .hero-label {
+            font-size: clamp(10px, 1.2vw, 12px);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(32px, 7vw, 52px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            color: var(--text);
+        }
+        .hero-amount .currency {
+            font-size: clamp(18px, 3vw, 28px);
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.40);
+            vertical-align: top;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        .hero-sub {
+            font-size: clamp(12px, 1.4vw, 14px);
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: clamp(16px, 2.5vw, 24px);
+            position: relative;
+            z-index: 1;
+        }
+        .hero-sub strong {
+            color: var(--primary);
+        }
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(10px, 1.5vw, 16px);
+            position: relative;
+            z-index: 1;
+        }
+        .hstat {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: var(--radius-sm);
+            padding: clamp(10px, 1.5vw, 16px);
+        }
+        .hstat-label {
+            font-size: clamp(9px, 1vw, 11px);
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .hstat-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(16px, 2.8vw, 22px);
+            font-weight: 700;
+        }
+        .hstat-val.green {
+            color: var(--secondary);
+        }
+        .hstat-val.red {
+            color: var(--primary);
+        }
+
+        /* ===== SECTION HEADER ===== */
+        .sec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            margin-top: clamp(20px, 3vw, 30px);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .sec-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(15px, 2.2vw, 18px);
+            font-weight: 600;
+        }
+        .sec-link {
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--secondary-light);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .sec-link:hover {
+            color: var(--secondary);
+        }
+
+        /* ===== GROUP CARDS ===== */
+        .groups-row {
+            display: flex;
+            gap: clamp(10px, 1.8vw, 16px);
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .groups-row::-webkit-scrollbar {
+            display: none;
+        }
+        .group-card {
+            min-width: clamp(130px, 28vw, 170px);
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: clamp(14px, 2vw, 20px);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.20);
+        }
+        .group-card:hover,
+        .group-card.selected {
+            border-color: rgba(255, 107, 107, 0.40);
+            background: rgba(255, 107, 107, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(255, 107, 107, 0.15);
+        }
+        .group-emoji {
+            font-size: clamp(24px, 4vw, 32px);
+            margin-bottom: 6px;
+        }
+        .group-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(12px, 1.6vw, 15px);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .group-meta {
+            font-size: clamp(10px, 1.2vw, 12px);
+            color: var(--muted);
+        }
+        .group-balance {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(13px, 1.6vw, 16px);
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .add-group-card {
+            min-width: clamp(90px, 18vw, 120px);
+            background: transparent;
+            border: 1px dashed rgba(78, 205, 196, 0.35);
+            border-radius: 18px;
+            padding: clamp(12px, 1.8vw, 18px);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .add-group-card:hover {
+            border-color: var(--secondary);
+            background: rgba(78, 205, 196, 0.06);
+        }
+        .add-group-card span {
+            font-size: clamp(22px, 3.5vw, 30px);
+            color: var(--secondary-light);
+        }
+        .add-group-card p {
+            font-size: clamp(10px, 1.2vw, 12px);
+            color: var(--muted);
+            text-align: center;
+        }
+
+        /* ===== EXPENSE ITEMS ===== */
+        .expense-item {
+            display: flex;
+            align-items: center;
+            gap: clamp(10px, 1.8vw, 16px);
+            padding: clamp(12px, 1.8vw, 18px);
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        }
+        .expense-item:hover {
+            border-color: rgba(255, 107, 107, 0.30);
+            background: var(--glass-hover);
+            transform: translateX(2px);
+        }
+        .exp-icon {
+            width: clamp(38px, 5.5vw, 50px);
+            height: clamp(38px, 5.5vw, 50px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(18px, 2.8vw, 24px);
+            flex-shrink: 0;
+            backdrop-filter: blur(8px);
+        }
+        .exp-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .exp-name {
+            font-weight: 600;
+            font-size: clamp(13px, 1.6vw, 15px);
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+        .exp-meta {
+            font-size: clamp(10px, 1.2vw, 12px);
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .exp-amount {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .exp-total {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(13px, 1.6vw, 15px);
+        }
+        .exp-you {
+            font-size: clamp(10px, 1.2vw, 12px);
+            margin-top: 2px;
+        }
+        .you-owe {
+            color: var(--primary);
+        }
+        .you-get {
+            color: var(--secondary);
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: var(--max-app);
+            background: rgba(10, 14, 26, 0.82);
+            backdrop-filter: var(--blur-heavy);
+            -webkit-backdrop-filter: var(--blur-heavy);
+            border-top: 1px solid var(--glass-border);
+            padding: 8px clamp(12px, 2vw, 24px) clamp(18px, 3vw, 28px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 200;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.30);
+            height: var(--nav-height);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: var(--radius-xs);
+            transition: all 0.2s;
+            min-width: clamp(44px, 10vw, 64px);
+            flex: 0 1 auto;
+        }
+        .nav-item svg {
+            width: clamp(20px, 3vw, 26px);
+            height: clamp(20px, 3vw, 26px);
+            stroke: var(--muted);
+            transition: stroke 0.2s;
+        }
+        .nav-item span {
+            font-size: clamp(8px, 1.2vw, 11px);
+            color: var(--muted);
+            font-weight: 500;
+            transition: color 0.2s;
+            text-align: center;
+        }
+        .nav-item.active svg {
+            stroke: var(--secondary);
+        }
+        .nav-item.active span {
+            color: var(--secondary);
+        }
+        .nav-fab {
+            width: clamp(48px, 8vw, 60px);
+            height: clamp(48px, 8vw, 60px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 28px rgba(255, 107, 107, 0.45);
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: -16px;
+            border: 3px solid rgba(10, 14, 26, 0.80);
+            flex-shrink: 0;
+        }
+        .nav-fab:hover {
+            transform: scale(1.08) rotate(90deg);
+        }
+        .nav-fab svg {
+            width: clamp(20px, 3vw, 26px);
+            height: clamp(20px, 3vw, 26px);
+            stroke: #fff;
+        }
+
+        /* ===== SETTLE SCREEN ===== */
+        .settle-header {
+            text-align: center;
+            padding: clamp(12px, 2vw, 24px) 0 clamp(8px, 1.5vw, 16px);
+        }
+        .settle-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(20px, 3.5vw, 28px);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .settle-sub {
+            font-size: clamp(12px, 1.4vw, 14px);
+            color: var(--muted2);
+        }
+        .settle-badge {
+            display: inline-block;
+            background: rgba(78, 205, 196, 0.10);
+            backdrop-filter: blur(8px);
+            color: var(--secondary);
+            border: 1px solid rgba(78, 205, 196, 0.25);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: clamp(11px, 1.2vw, 13px);
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* ===== DEBT GRAPH ===== */
+        .debt-graph {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: clamp(16px, 2.5vw, 24px);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+        }
+        .debt-graph-title {
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .debt-simplified {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        .debt-row {
+            display: flex;
+            align-items: center;
+            gap: clamp(6px, 1.2vw, 12px);
+            margin-bottom: 12px;
+            flex-wrap: nowrap;
+        }
+        .debt-from {
+            font-size: clamp(12px, 1.4vw, 14px);
+            font-weight: 600;
+            min-width: clamp(44px, 8vw, 70px);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .debt-arrow-wrap {
+            flex: 1;
+            position: relative;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            min-width: 60px;
+        }
+        .debt-line {
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            flex: 1;
+        }
+        .debt-arrow-tip {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid var(--secondary);
+            flex-shrink: 0;
+        }
+        .debt-amount-badge {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: clamp(10px, 1.1vw, 12px);
+            font-weight: 700;
+            white-space: nowrap;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .debt-to {
+            font-size: clamp(12px, 1.4vw, 14px);
+            font-weight: 600;
+            min-width: clamp(44px, 8vw, 70px);
+            flex-shrink: 0;
+        }
+
+        /* ===== SETTLE CARDS ===== */
+        .settle-card {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: clamp(14px, 2vw, 22px);
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
+            transition: all 0.2s;
+        }
+        .settle-card:hover {
+            border-color: var(--glass-border-hover);
+            transform: translateY(-1px);
+        }
+        .settle-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .settle-persons {
+            display: flex;
+            align-items: center;
+            gap: clamp(4px, 1vw, 10px);
+            flex-wrap: wrap;
+        }
+        .person-chip {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: clamp(12px, 1.3vw, 14px);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .person-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .arrow-chip {
+            color: var(--muted2);
+            font-size: clamp(12px, 1.3vw, 14px);
+        }
+        .settle-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(18px, 3vw, 26px);
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .upi-btn {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(26, 80, 70, 0.92), rgba(30, 110, 100, 0.92));
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(78, 205, 196, 0.20);
+            border-radius: var(--radius-sm);
+            padding: clamp(12px, 1.8vw, 16px);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(13px, 1.6vw, 16px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(78, 205, 196, 0.20);
+        }
+        .upi-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 28px rgba(78, 205, 196, 0.30);
+        }
+        .upi-logo {
+            background: #fff;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: clamp(10px, 1.1vw, 12px);
+            font-weight: 900;
+            color: #1A6B5A;
+            letter-spacing: 0.5px;
+        }
+        .settled-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(78, 205, 196, 0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(78, 205, 196, 0.20);
+            border-radius: 12px;
+            padding: clamp(10px, 1.4vw, 14px);
+            font-size: clamp(12px, 1.3vw, 14px);
+            font-weight: 600;
+            color: var(--secondary);
+            flex-wrap: wrap;
+        }
+
+        /* ===== BALANCE ROW ===== */
+        .balance-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: clamp(12px, 1.8vw, 18px);
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+            transition: all 0.2s;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .balance-row:hover {
+            border-color: var(--glass-border-hover);
+        }
+        .bal-person {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1.4vw, 14px);
+            flex: 1;
+            min-width: 120px;
+        }
+        .bal-av {
+            width: clamp(32px, 5vw, 42px);
+            height: clamp(32px, 5vw, 42px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(12px, 1.6vw, 16px);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .bal-name {
+            font-weight: 600;
+            font-size: clamp(13px, 1.5vw, 15px);
+        }
+        .bal-status {
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--muted);
+        }
+        .bal-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(14px, 2vw, 18px);
+            flex-shrink: 0;
+        }
+
+        /* ===== GROUP DETAIL ===== */
+        .group-detail {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: clamp(14px, 2vw, 22px);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
+        }
+        .group-detail:hover {
+            border-color: rgba(255, 107, 107, 0.30);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.10);
+        }
+        .group-detail-header {
+            display: flex;
+            align-items: center;
+            gap: clamp(10px, 1.8vw, 18px);
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .group-detail-emoji {
+            font-size: clamp(28px, 4.5vw, 38px);
+        }
+        .group-detail-info .name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(15px, 2vw, 18px);
+        }
+        .group-detail-info .meta {
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .group-progress {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .group-progress-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+        .member-avatars {
+            display: flex;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .member-av {
+            width: clamp(24px, 3.6vw, 32px);
+            height: clamp(24px, 3.6vw, 32px);
+            border-radius: 50%;
+            border: 2px solid rgba(10, 14, 26, 0.80);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(10px, 1.2vw, 12px);
+            font-weight: 700;
+            margin-left: -8px;
+        }
+        .member-av:first-child {
+            margin-left: 0;
+        }
+        .group-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .total-chip {
+            font-size: clamp(11px, 1.2vw, 13px);
+            color: var(--muted);
+        }
+        .total-chip strong {
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .balance-chip {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(13px, 1.6vw, 16px);
+            font-weight: 700;
+        }
+
+        /* ===== ACTIVITY ===== */
+        .activity-item {
+            display: flex;
+            gap: clamp(10px, 1.6vw, 18px);
+            padding: clamp(12px, 1.6vw, 18px) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            align-items: flex-start;
+        }
+        .activity-dot-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .activity-dot {
+            width: clamp(8px, 1.2vw, 12px);
+            height: clamp(8px, 1.2vw, 12px);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        .activity-line {
+            width: 1px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 6px;
+            min-height: 20px;
+        }
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .activity-content .text {
+            font-size: clamp(12px, 1.4vw, 14px);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .activity-content .text strong {
+            font-weight: 600;
+        }
+        .activity-content .time {
+            font-size: clamp(10px, 1.1vw, 12px);
+            color: var(--muted);
+            margin-top: 3px;
+        }
+        .activity-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(13px, 1.5vw, 15px);
+            margin-left: auto;
+            padding-left: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ===== CHIP TABS ===== */
+        .chip-tabs {
+            display: flex;
+            gap: clamp(6px, 1.2vw, 12px);
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chip-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        .chip {
+            padding: 6px clamp(12px, 2vw, 20px);
+            border-radius: 20px;
+            font-size: clamp(12px, 1.3vw, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--glass-border);
+            white-space: nowrap;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            flex-shrink: 0;
+        }
+        .chip.active {
+            background: rgba(255, 107, 107, 0.30);
+            border-color: rgba(255, 107, 107, 0.35);
+            color: #fff;
+            box-shadow: 0 2px 14px rgba(255, 107, 107, 0.20);
+        }
+        .chip:not(.active) {
+            color: var(--muted2);
+            background: var(--glass);
+        }
+
+        /* ===== TAGS ===== */
+        .tag {
+            display: inline-block;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: clamp(10px, 1vw, 12px);
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+        .tag-food {
+            background: rgba(255, 217, 61, 0.12);
+            color: var(--warning);
+        }
+        .tag-travel {
+            background: rgba(255, 107, 107, 0.12);
+            color: var(--primary);
+        }
+        .tag-rent {
+            background: rgba(78, 205, 196, 0.12);
+            color: var(--secondary);
+        }
+        .tag-util {
+            background: rgba(107, 123, 141, 0.12);
+            color: var(--muted2);
+        }
+        .tag-ent {
+            background: rgba(255, 217, 61, 0.12);
+            color: var(--warning);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 500;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+        .modal-overlay.open {
+            display: flex;
+            animation: slideUp 0.30s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        .modal {
+            background: rgba(16, 20, 36, 0.94);
+            backdrop-filter: var(--blur-heavy);
+            -webkit-backdrop-filter: var(--blur-heavy);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+            border-radius: var(--radius) var(--radius) 0 0;
+            padding: clamp(20px, 3vw, 32px) clamp(18px, 3vw, 32px) clamp(24px, 4vw, 40px);
+            width: 100%;
+            max-width: var(--max-app);
+            max-height: 92vh;
+            max-height: 92dvh;
+            overflow-y: auto;
+            box-shadow: 0 -8px 60px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-size: clamp(10px, 1.1vw, 12px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted2);
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+        }
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: clamp(12px, 1.6vw, 16px) clamp(14px, 2vw, 18px);
+            color: var(--text);
+            font-size: clamp(14px, 1.6vw, 16px);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        .form-input:focus {
+            border-color: rgba(255, 107, 107, 0.45);
+            background: rgba(255, 107, 107, 0.06);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.10);
+        }
+        .amount-input {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: var(--secondary);
+            outline: none;
+            width: 100%;
+        }
+        .amount-wrap {
+            background: rgba(78, 205, 196, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(78, 205, 196, 0.18);
+            border-radius: 16px;
+            padding: clamp(16px, 2.5vw, 24px);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .amount-label {
+            font-size: clamp(10px, 1.1vw, 12px);
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(6px, 1vw, 10px);
+            margin-bottom: 16px;
+        }
+        .cat-btn {
+            background: var(--glass);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: clamp(8px, 1.2vw, 14px) 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn.active {
+            border-color: rgba(255, 107, 107, 0.50);
+            background: rgba(255, 107, 107, 0.12);
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.15);
+        }
+        .cat-btn .cat-icon {
+            font-size: clamp(18px, 3vw, 26px);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .cat-btn .cat-name {
+            font-size: clamp(9px, 1vw, 11px);
+            color: var(--muted);
+        }
+        .split-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 16px;
+            flex-wrap: nowrap;
+        }
+        .split-tab {
+            flex: 1;
+            padding: clamp(6px, 1vw, 10px) 4px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: clamp(10px, 1.1vw, 13px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+        .split-tab.active {
+            background: rgba(255, 107, 107, 0.30);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.20);
+        }
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: clamp(14px, 2vw, 18px);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(14px, 1.8vw, 18px);
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 24px rgba(255, 107, 107, 0.35);
+        }
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.45);
+        }
+
+        /* ===== MEMBER PILLS ===== */
+        .member-row {
+            display: flex;
+            gap: clamp(6px, 1vw, 12px);
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .member-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--glass);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: clamp(12px, 1.3vw, 14px);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .member-pill.active {
+            border-color: rgba(255, 107, 107, 0.40);
+            background: rgba(255, 107, 107, 0.08);
+        }
+        .member-pill .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ===== SPLIT PREVIEW ===== */
+        #split-preview {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: clamp(10px, 1.4vw, 16px);
+            margin-bottom: 16px;
+            font-size: clamp(12px, 1.3vw, 14px);
+            color: var(--muted2);
+            text-align: center;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== CREATE GROUP BUTTON ===== */
+        .create-group-btn {
+            width: 100%;
+            border: 1px dashed rgba(78, 205, 196, 0.35);
+            background: rgba(78, 205, 196, 0.04);
+            backdrop-filter: blur(8px);
+            color: var(--secondary-light);
+            border-radius: var(--radius-sm);
+            padding: clamp(12px, 1.8vw, 18px);
+            font-size: clamp(13px, 1.5vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .create-group-btn:hover {
+            border-color: rgba(78, 205, 196, 0.60);
+            background: rgba(78, 205, 196, 0.08);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: calc(var(--nav-height) + 24px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 24, 40, 0.94);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(78, 205, 196, 0.30);
+            color: var(--secondary);
+            padding: clamp(10px, 1.6vw, 16px) clamp(16px, 2.5vw, 28px);
+            border-radius: var(--radius-sm);
+            font-size: clamp(12px, 1.4vw, 15px);
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.30s;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
+            max-width: calc(100% - 32px);
+            white-space: normal;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* ===== LOGIN TRANSITION ===== */
+        @keyframes loginOut {
+            to {
+                opacity: 0;
+                transform: scale(0.96);
+                pointer-events: none;
+            }
+        }
+        @keyframes appIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #app-shell.visible {
+            display: block;
+            animation: appIn 0.40s ease forwards;
+        }
+
+        /* ===== DESKTOP ENHANCEMENTS ===== */
+        @media (min-width: 640px) {
+            :root {
+                --max-app: 600px;
+            }
+
+            .bottom-nav {
+                border-radius: 20px 20px 0 0;
+            }
+
+            .modal {
+                border-radius: var(--radius) var(--radius) 0 0;
+            }
+
+            .group-card {
+                min-width: 160px;
+            }
+
+            .debt-from,
+            .debt-to {
+                min-width: 70px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            :root {
+                --max-app: 640px;
+            }
+
+            .login-card {
+                padding: 44px 48px 40px;
+            }
+
+            .hero-amount {
+                font-size: 48px;
+            }
+
+            .groups-row {
+                gap: 16px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            :root {
+                --max-app: 680px;
+            }
+
+            .app {
+                padding-bottom: calc(var(--nav-height) + 24px);
+            }
+
+            .bottom-nav {
+                padding: 10px 32px 24px;
+                border-radius: 24px 24px 0 0;
+            }
+        }
+
+        /* ===== DARK MODE COMPAT ===== */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #0A0E1A;
+                --text: #FFFFFF;
+            }
+            /* keeping dark theme always */
+        }
+
+        /* ===== SAFE AREA ===== */
+        @supports (padding: max(0px)) {
+            .bottom-nav {
+                padding-bottom: max(18px, env(safe-area-inset-bottom, 18px));
+            }
+            .app {
+                padding-bottom: max(80px, calc(var(--nav-height) + env(safe-area-inset-bottom, 16px)));
+            }
+            .toast {
+                bottom: max(calc(var(--nav-height) + 24px), calc(var(--nav-height) + env(safe-area-inset-bottom, 24px)));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BACKGROUND ORBS ===== -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <!-- ===== LOGIN PAGE ===== -->
+    <div id="login-page">
+        <div class="login-card">
+            <div class="login-logo">Split<span>Smart</span></div>
+            <div class="login-tagline">Split smarter. Settle faster. Zero drama.</div>
+
+            <div class="login-tabs">
+                <div class="login-tab active" onclick="switchLoginTab('login', this)">Log In</div>
+                <div class="login-tab" onclick="switchLoginTab('signup', this)">Sign Up</div>
+            </div>
+
+            <div id="login-form">
+                <div class="demo-hint">💡 Demo: use any email &amp; password to continue</div>
+                <div class="login-field">
+                    <label class="login-label">Email</label>
+                    <input type="email" class="login-input" id="login-email" placeholder="charan@karpagam.edu" value="charan@karpagam.edu" />
+                </div>
+                <div class="login-field">
+                    <label class="login-label">Password</label>
+                    <input type="password" class="login-input" id="login-pass" placeholder="••••••••" value="demo1234" />
+                </div>
+                <button class="login-btn" onclick="doLogin()">Log In to SplitSmart</button>
+            </div>
+
+            <div id="signup-form" style="display:none">
+                <div class="login-field">
+                    <label class="login-label">Full Name</label>
+                    <input type="text" class="login-input" placeholder="Charan Kumar" />
+                </div>
+                <div class="login-field">
+                    <label class="login-label">Email</label>
+                    <input type="email" class="login-input" placeholder="charan@karpagam.edu" />
+                </div>
+                <div class="login-field">
+                    <label class="login-label">UPI ID</label>
+                    <input type="text" class="login-input" placeholder="charan@upi" />
+                </div>
+                <div class="login-field">
+                    <label class="login-label">Password</label>
+                    <input type="password" class="login-input" placeholder="Create a password" />
+                </div>
+                <button class="login-btn" onclick="doLogin()">Create Account</button>
+            </div>
+
+            <div class="login-divider">or continue with</div>
+            <button class="google-btn" onclick="doLogin()">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Continue with Google
+            </button>
+
+            <div class="login-footer">By continuing, you agree to our <a>Terms</a> &amp; <a>Privacy Policy</a></div>
+        </div>
+    </div>
+
+    <!-- ===== APP SHELL ===== -->
+    <div id="app-shell">
+        <div class="app">
+
+            <!-- TOP BAR -->
+            <div class="topbar">
+                <div class="logo">Split<span>Smart</span></div>
+                <div class="topbar-right">
+                    <div class="notif-btn" onclick="showToast('3 new activity updates')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <div class="notif-dot"></div>
+                    </div>
+                    <div class="avatar">SC</div>
+                </div>
+            </div>
+
+            <!-- HOME SCREEN -->
+            <div class="screen active" id="screen-home">
+                <div class="hero-card">
+                    <div class="hero-label">Total you're owed</div>
+                    <div class="hero-amount"><span class="currency">₹</span>2,340</div>
+                    <div class="hero-sub">Across 3 groups · <strong>₹850 overdue</strong></div>
+                    <div class="hero-stats">
+                        <div class="hstat">
+                            <div class="hstat-label">You Owe</div>
+                            <div class="hstat-val red">₹1,200</div>
+                        </div>
+                        <div class="hstat">
+                            <div class="hstat-label">Owed to You</div>
+                            <div class="hstat-val green">₹3,540</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sec-header">
+                    <div class="sec-title">Your Groups</div>
+                    <div class="sec-link" onclick="switchScreen('groups')">See all →</div>
+                </div>
+                <div class="groups-row">
+                    <div class="group-card selected" onclick="switchScreen('groups')">
+                        <div class="group-emoji">🏖️</div>
+                        <div class="group-name">Goa Trip</div>
+                        <div class="group-meta">5 members</div>
+                        <div class="group-balance you-get">+₹2,340</div>
+                    </div>
+                    <div class="group-card" onclick="switchScreen('groups')">
+                        <div class="group-emoji">🏠</div>
+                        <div class="group-name">Flat 204</div>
+                        <div class="group-meta">4 members</div>
+                        <div class="group-balance you-owe">-₹850</div>
+                    </div>
+                    <div class="group-card" onclick="switchScreen('groups')">
+                        <div class="group-emoji">🍕</div>
+                        <div class="group-name">Friday Crew</div>
+                        <div class="group-meta">6 members</div>
+                        <div class="group-balance" style="color:var(--muted2)">Settled</div>
+                    </div>
+                    <div class="add-group-card" onclick="showToast('Group creation coming soon!')">
+                        <span>+</span>
+                        <p>New Group</p>
+                    </div>
+                </div>
+
+                <div class="sec-header">
+                    <div class="sec-title">Recent Expenses</div>
+                    <div class="sec-link" onclick="switchScreen('activity')">View all →</div>
+                </div>
+
+                <div class="expense-item">
+                    <div class="exp-icon" style="background:rgba(255,217,61,0.10)">🍔</div>
+                    <div class="exp-info">
+                        <div class="exp-name">McD Airport Run</div>
+                        <div class="exp-meta">Goa Trip · Rahul paid · Yesterday</div>
+                    </div>
+                    <div class="exp-amount">
+                        <div class="exp-total">₹1,240</div>
+                        <div class="exp-you you-owe">you owe ₹248</div>
+                    </div>
+                </div>
+
+                <div class="expense-item">
+                    <div class="exp-icon" style="background:rgba(255,107,107,0.10)">🛵</div>
+                    <div class="exp-info">
+                        <div class="exp-name">Scooter Rentals</div>
+                        <div class="exp-meta">Goa Trip · You paid · Mon</div>
+                    </div>
+                    <div class="exp-amount">
+                        <div class="exp-total">₹3,000</div>
+                        <div class="exp-you you-get">you get ₹2,400</div>
+                    </div>
+                </div>
+
+                <div class="expense-item">
+                    <div class="exp-icon" style="background:rgba(78,205,196,0.10)">🏠</div>
+                    <div class="exp-info">
+                        <div class="exp-name">June Rent</div>
+                        <div class="exp-meta">Flat 204 · Priya paid · Jun 1</div>
+                    </div>
+                    <div class="exp-amount">
+                        <div class="exp-total">₹14,000</div>
+                        <div class="exp-you you-owe">you owe ₹3,500</div>
+                    </div>
+                </div>
+
+                <div class="expense-item">
+                    <div class="exp-icon" style="background:rgba(255,217,61,0.10)">🎬</div>
+                    <div class="exp-info">
+                        <div class="exp-name">Netflix Split</div>
+                        <div class="exp-meta">Friday Crew · You paid · May 28</div>
+                    </div>
+                    <div class="exp-amount">
+                        <div class="exp-total">₹649</div>
+                        <div class="exp-you you-get">you get ₹541</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GROUPS SCREEN -->
+            <div class="screen" id="screen-groups">
+                <div style="padding:clamp(8px,1.5vw,16px) 0">
+                    <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3.5vw,28px);font-weight:700;margin-bottom:4px">Groups</div>
+                    <div style="font-size:clamp(12px,1.4vw,15px);color:var(--muted)">Manage your shared expenses</div>
+                </div>
+
+                <div class="chip-tabs">
+                    <div class="chip active">All Groups</div>
+                    <div class="chip">You Owe</div>
+                    <div class="chip">Owed to You</div>
+                    <div class="chip">Settled</div>
+                </div>
+
+                <div class="group-detail" onclick="switchScreen('settle')">
+                    <div class="group-detail-header">
+                        <div class="group-detail-emoji">🏖️</div>
+                        <div class="group-detail-info">
+                            <div class="name">Goa Trip</div>
+                            <div class="meta">Jun 14–17 · 12 expenses</div>
+                        </div>
+                    </div>
+                    <div class="member-avatars">
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF6B6B,#FF8A8A)">SC</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF8C42,#FFB07C)">RK</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#4ECDC4,#7EDDD6)">PR</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#FFD93D,#FFE680)">AM</div>
+                        <div class="member-av" style="background:rgba(255,255,255,0.06);color:var(--muted)">+1</div>
+                    </div>
+                    <div class="group-progress" style="margin-bottom:12px">
+                        <div class="group-progress-bar" style="width:60%;background:linear-gradient(90deg,var(--primary),var(--secondary))"></div>
+                    </div>
+                    <div class="group-bottom">
+                        <div class="total-chip">Total: <strong>₹18,450</strong></div>
+                        <div class="balance-chip you-get">+₹2,340</div>
+                    </div>
+                </div>
+
+                <div class="group-detail">
+                    <div class="group-detail-header">
+                        <div class="group-detail-emoji">🏠</div>
+                        <div class="group-detail-info">
+                            <div class="name">Flat 204</div>
+                            <div class="meta">Ongoing · 28 expenses</div>
+                        </div>
+                    </div>
+                    <div class="member-avatars">
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF6B6B,#FF8A8A)">SC</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#9B59B6,#AF7AC5)">VJ</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#4ECDC4,#7EDDD6)">PR</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF8C42,#FFB07C)">KT</div>
+                    </div>
+                    <div class="group-progress" style="margin-bottom:12px">
+                        <div class="group-progress-bar" style="width:40%;background:linear-gradient(90deg,var(--primary),#FF8A8A)"></div>
+                    </div>
+                    <div class="group-bottom">
+                        <div class="total-chip">Total: <strong>₹46,200</strong></div>
+                        <div class="balance-chip you-owe">-₹850</div>
+                    </div>
+                </div>
+
+                <div class="group-detail">
+                    <div class="group-detail-header">
+                        <div class="group-detail-emoji">🍕</div>
+                        <div class="group-detail-info">
+                            <div class="name">Friday Crew</div>
+                            <div class="meta">May · 8 expenses</div>
+                        </div>
+                    </div>
+                    <div class="member-avatars">
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF6B6B,#FF8A8A)">SC</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#FFD93D,#FFE680)">NL</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#4ECDC4,#7EDDD6)">RS</div>
+                        <div class="member-av" style="background:linear-gradient(135deg,#FF8C42,#FFB07C)">TK</div>
+                        <div class="member-av" style="background:rgba(255,255,255,0.06);color:var(--muted)">+2</div>
+                    </div>
+                    <div class="group-progress" style="margin-bottom:12px">
+                        <div class="group-progress-bar" style="width:100%;background:linear-gradient(90deg,var(--secondary),#7EDDD6)"></div>
+                    </div>
+                    <div class="group-bottom">
+                        <div class="total-chip">Total: <strong>₹3,240</strong></div>
+                        <div class="balance-chip" style="color:var(--secondary)">✓ All settled</div>
+                    </div>
+                </div>
+
+                <button class="create-group-btn" onclick="showToast('Invite link copied! 📋')">+ Create New Group</button>
+            </div>
+
+            <!-- SETTLE SCREEN -->
+            <div class="screen" id="screen-settle">
+                <div class="settle-header">
+                    <div style="font-size:clamp(28px,5vw,40px)">🏖️</div>
+                    <div class="settle-title">Goa Trip</div>
+                    <div class="settle-sub">Smart settlement · Minimized transactions</div>
+                    <div class="settle-badge">⚡ 3 transactions to clear all debts</div>
+                </div>
+
+                <div class="debt-graph">
+                    <div class="debt-graph-title">
+                        <span>DEBT FLOW</span>
+                        <span class="debt-simplified">Simplified ↓</span>
+                    </div>
+                    <div class="debt-row">
+                        <div class="debt-from">Arjun</div>
+                        <div class="debt-arrow-wrap">
+                            <div class="debt-line" style="width:calc(100% - 8px)"></div>
+                            <div class="debt-arrow-tip"></div>
+                            <div class="debt-amount-badge" style="color:var(--primary)">₹600</div>
+                        </div>
+                        <div class="debt-to">You</div>
+                    </div>
+                    <div class="debt-row">
+                        <div class="debt-from">You</div>
+                        <div class="debt-arrow-wrap">
+                            <div class="debt-line" style="width:calc(70% - 8px);background:linear-gradient(90deg,var(--secondary),var(--primary))"></div>
+                            <div class="debt-arrow-tip" style="border-left-color:var(--primary)"></div>
+                            <div class="debt-amount-badge" style="color:var(--secondary)">₹2,340</div>
+                        </div>
+                        <div class="debt-to">Rahul</div>
+                    </div>
+                    <div class="debt-row">
+                        <div class="debt-from">Priya</div>
+                        <div class="debt-arrow-wrap">
+                            <div class="debt-line" style="width:calc(50% - 8px)"></div>
+                            <div class="debt-arrow-tip"></div>
+                            <div class="debt-amount-badge" style="color:var(--primary)">₹1,100</div>
+                        </div>
+                        <div class="debt-to">Rahul</div>
+                    </div>
+                </div>
+
+                <div class="sec-header">
+                    <div class="sec-title">Who owes what</div>
+                </div>
+                <div>
+                    <div class="balance-row">
+                        <div class="bal-person">
+                            <div class="bal-av" style="background:linear-gradient(135deg,#FF8C42,#FFB07C)">RK</div>
+                            <div><div class="bal-name">Rahul</div><div class="bal-status">owes you</div></div>
+                        </div>
+                        <div class="bal-amount you-get">+₹2,340</div>
+                    </div>
+                    <div class="balance-row">
+                        <div class="bal-person">
+                            <div class="bal-av" style="background:linear-gradient(135deg,#4ECDC4,#7EDDD6)">PR</div>
+                            <div><div class="bal-name">Priya</div><div class="bal-status">owes you</div></div>
+                        </div>
+                        <div class="bal-amount you-get">+₹600</div>
+                    </div>
+                    <div class="balance-row">
+                        <div class="bal-person">
+                            <div class="bal-av" style="background:linear-gradient(135deg,#FFD93D,#FFE680)">AM</div>
+                            <div><div class="bal-name">Arjun</div><div class="bal-status" style="color:var(--muted)">settled ✓</div></div>
+                        </div>
+                        <div class="bal-amount" style="color:var(--muted)">₹0</div>
+                    </div>
+                </div>
+
+                <div class="sec-header" style="margin-top:clamp(20px,3vw,32px)">
+                    <div class="sec-title">Settle Up</div>
+                </div>
+
+                <div class="settle-card">
+                    <div class="settle-card-header">
+                        <div class="settle-persons">
+                            <div class="person-chip"><div class="person-dot" style="background:#FF8C42"></div>Rahul</div>
+                            <div class="arrow-chip">→</div>
+                            <div class="person-chip"><div class="person-dot" style="background:#FF6B6B"></div>You</div>
+                        </div>
+                        <div class="settle-amount">₹2,340</div>
+                    </div>
+                    <button class="upi-btn" onclick="handleUPI('Rahul', '2340')">
+                        <div class="upi-logo">UPI</div>
+                        Pay Rahul ₹2,340 instantly
+                    </button>
+                </div>
+
+                <div class="settle-card">
+                    <div class="settle-card-header">
+                        <div class="settle-persons">
+                            <div class="person-chip"><div class="person-dot" style="background:#4ECDC4"></div>Priya</div>
+                            <div class="arrow-chip">→</div>
+                            <div class="person-chip"><div class="person-dot" style="background:#FF6B6B"></div>You</div>
+                        </div>
+                        <div class="settle-amount">₹600</div>
+                    </div>
+                    <button class="upi-btn" onclick="handleUPI('Priya', '600')">
+                        <div class="upi-logo">UPI</div>
+                        Pay Priya ₹600 instantly
+                    </button>
+                </div>
+
+                <div class="settle-card">
+                    <div class="settle-card-header">
+                        <div class="settle-persons">
+                            <div class="person-chip"><div class="person-dot" style="background:#FFD93D"></div>Arjun</div>
+                            <div class="arrow-chip">→</div>
+                            <div class="person-chip"><div class="person-dot" style="background:#FF6B6B"></div>You</div>
+                        </div>
+                        <div class="settle-amount" style="color:var(--secondary)">₹0</div>
+                    </div>
+                    <div class="settled-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+                        Arjun has settled up · Jun 18
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIVITY SCREEN -->
+            <div class="screen" id="screen-activity">
+                <div style="padding:clamp(8px,1.5vw,16px) 0">
+                    <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3.5vw,28px);font-weight:700;margin-bottom:4px">Activity</div>
+                    <div style="font-size:clamp(12px,1.4vw,15px);color:var(--muted)">All transactions across groups</div>
+                </div>
+
+                <div class="chip-tabs">
+                    <div class="chip active">All</div>
+                    <div class="chip">Food 🍔</div>
+                    <div class="chip">Travel 🛵</div>
+                    <div class="chip">Rent 🏠</div>
+                    <div class="chip">Utilities</div>
+                </div>
+
+                <div style="font-size:clamp(10px,1.1vw,12px);color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:600">June 2025</div>
+
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--secondary)"></div><div class="activity-line"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>Rahul settled up</strong> with you in Goa Trip <span class="tag tag-travel">Travel</span></div>
+                        <div class="time">Today · 2:30 PM</div>
+                    </div>
+                    <div class="activity-amount you-get">+₹600</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--warning)"></div><div class="activity-line"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>Rahul</strong> added <strong>McD Airport Run</strong> in Goa Trip <span class="tag tag-food">Food</span></div>
+                        <div class="time">Yesterday · 8:45 PM</div>
+                    </div>
+                    <div class="activity-amount you-owe">-₹248</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--primary)"></div><div class="activity-line"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>You</strong> added <strong>Scooter Rentals</strong> in Goa Trip <span class="tag tag-travel">Travel</span></div>
+                        <div class="time">Jun 16 · 10:20 AM</div>
+                    </div>
+                    <div class="activity-amount you-get">+₹2,400</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--secondary)"></div><div class="activity-line"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>Priya</strong> added <strong>June Rent</strong> in Flat 204 <span class="tag tag-rent">Rent</span></div>
+                        <div class="time">Jun 1 · 9:00 AM</div>
+                    </div>
+                    <div class="activity-amount you-owe">-₹3,500</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--warning)"></div><div class="activity-line"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>You</strong> added <strong>Netflix + Prime</strong> in Friday Crew <span class="tag tag-ent">Entmt</span></div>
+                        <div class="time">May 28 · 11:00 PM</div>
+                    </div>
+                    <div class="activity-amount you-get">+₹541</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot-wrap"><div class="activity-dot" style="background:var(--muted)"></div></div>
+                    <div class="activity-content">
+                        <div class="text"><strong>Friday Crew</strong> fully settled <span class="tag tag-ent">Entmt</span></div>
+                        <div class="time">May 30 · 6:14 PM</div>
+                    </div>
+                    <div class="activity-amount" style="color:var(--secondary)">✓</div>
+                </div>
+            </div>
+
+            <!-- BOTTOM NAV -->
+            <div class="bottom-nav">
+                <div class="nav-item active" id="nav-home" onclick="switchScreen('home')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Home</span>
+                </div>
+                <div class="nav-item" id="nav-groups" onclick="switchScreen('groups')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Groups</span>
+                </div>
+                <div class="nav-fab" onclick="openModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div class="nav-item" id="nav-settle" onclick="switchScreen('settle')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Settle</span>
+                </div>
+                <div class="nav-item" id="nav-activity" onclick="switchScreen('activity')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span>Activity</span>
+                </div>
+            </div>
+
+        </div><!-- /app -->
+    </div><!-- /app-shell -->
+
+    <!-- ===== ADD EXPENSE MODAL ===== -->
+    <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-title">Add Expense</div>
+            <div class="amount-wrap">
+                <div class="amount-label">Total Amount (₹)</div>
+                <input type="number" class="amount-input" placeholder="0" id="expense-amount" />
+            </div>
+            <label class="form-label">Description</label>
+            <input type="text" class="form-input" placeholder="e.g. Dinner at Souza's" id="expense-desc" />
+            <label class="form-label">Category</label>
+            <div class="cat-grid">
+                <div class="cat-btn active" onclick="selectCat(this)"><span class="cat-icon">🍔</span><span class="cat-name">Food</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">🛵</span><span class="cat-name">Travel</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">🏠</span><span class="cat-name">Rent</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">💡</span><span class="cat-name">Utilities</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">🎬</span><span class="cat-name">Entmt</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">🛒</span><span class="cat-name">Shopping</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">🏥</span><span class="cat-name">Medical</span></div>
+                <div class="cat-btn" onclick="selectCat(this)"><span class="cat-icon">📦</span><span class="cat-name">Other</span></div>
+            </div>
+            <label class="form-label">Paid by</label>
+            <div class="member-row">
+                <div class="member-pill active" onclick="selectMember(this)"><div class="dot" style="background:#FF6B6B"></div>You</div>
+                <div class="member-pill" onclick="selectMember(this)"><div class="dot" style="background:#FF8C42"></div>Rahul</div>
+                <div class="member-pill" onclick="selectMember(this)"><div class="dot" style="background:#4ECDC4"></div>Priya</div>
+                <div class="member-pill" onclick="selectMember(this)"><div class="dot" style="background:#FFD93D"></div>Arjun</div>
+            </div>
+            <label class="form-label">Split type</label>
+            <div class="split-tabs">
+                <div class="split-tab active" onclick="selectTab(this)">Equal</div>
+                <div class="split-tab" onclick="selectTab(this)">%</div>
+                <div class="split-tab" onclick="selectTab(this)">Exact ₹</div>
+                <div class="split-tab" onclick="selectTab(this)">Shares</div>
+            </div>
+            <div id="split-preview">Enter amount to see split preview</div>
+            <label class="form-label">Group</label>
+            <select class="form-input" style="appearance:none;cursor:pointer">
+                <option>🏖️ Goa Trip</option>
+                <option>🏠 Flat 204</option>
+                <option>🍕 Friday Crew</option>
+            </select>
+            <button class="submit-btn" onclick="addExpense()">Add Expense</button>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ===== LOGIN ===== */
+        function switchLoginTab(tab, el) {
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+        }
+
+        function doLogin() {
+            const lp = document.getElementById('login-page');
+            lp.style.animation = 'loginOut 0.35s ease forwards';
+            setTimeout(() => {
+                lp.style.display = 'none';
+                const shell = document.getElementById('app-shell');
+                shell.classList.add('visible');
+                setTimeout(() => {
+                    document.querySelectorAll('.group-progress-bar').forEach(b => {
+                        const w = b.style.width;
+                        b.style.width = '0';
+                        setTimeout(() => b.style.width = w, 100);
+                    });
+                }, 200);
+            }, 350);
+        }
+
+        /* ===== APP NAV ===== */
+        function switchScreen(name) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const target = document.getElementById('screen-' + name);
+            if (target) target.classList.add('active');
+            const nav = document.getElementById('nav-' + name);
+            if (nav) nav.classList.add('active');
+        }
+
+        function openModal() {
+            document.getElementById('modal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('open');
+        }
+
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modal')) closeModal();
+        }
+
+        function selectCat(el) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function selectMember(el) {
+            document.querySelectorAll('.member-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function selectTab(el) {
+            document.querySelectorAll('.split-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        /* ===== EXPENSE ===== */
+        document.getElementById('expense-amount').addEventListener('input', function() {
+            const val = parseFloat(this.value) || 0;
+            const per = (val / 4).toFixed(0);
+            const preview = document.getElementById('split-preview');
+            if (val > 0) {
+                preview.innerHTML =
+                    `<span style="color:var(--text);font-weight:600">Equal split across 4 members</span><br>₹${per} each · Total ₹${val.toLocaleString('en-IN')}`;
+            } else {
+                preview.innerHTML = 'Enter amount to see split preview';
+            }
+        });
+
+        function addExpense() {
+            const amt = document.getElementById('expense-amount').value;
+            const desc = document.getElementById('expense-desc').value;
+            if (!amt || !desc) { showToast('Please fill amount & description'); return; }
+            closeModal();
+            showToast('✅ Expense added to Goa Trip!');
+            document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-desc').value = '';
+            document.getElementById('split-preview').innerHTML = 'Enter amount to see split preview';
+        }
+
+        /* ===== UPI ===== */
+        function handleUPI(name, amount) {
+            showToast(`Opening UPI for ₹${amount} to ${name}...`);
+            // window.location.href = `upi://pay?pa=${name.toLowerCase()}@upi&pn=${name}&am=${amount}&cu=INR&tn=SplitSmart+Settlement`;
+        }
+
+        /* ===== TOAST ===== */
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => t.classList.remove('show'), 2800);
+        }
+
+        /* ===== ENTER KEY LOGIN ===== */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('login-page').style.display !== 'none') doLogin();
+        });
+    </script>
+</body>
+</html>
